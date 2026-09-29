@@ -15,3 +15,11 @@ WITH total AS (
 SELECT macrorregiao, leitos, ROUND(leitos * 1000.0 / pop , 2) AS por_mil
 FROM total
 ORDER BY por_mil DESC;
+
+--TOP 3 por macrorregião por leitos (48 linhas expectadas)
+
+WITH total AS (
+    SELECT nome, macrorregiao, leitos_sus,
+    ROW_NUMBER() OVER (PARTITION BY macrorregiao ORDER BY leitos_sus DESC) AS pos
+    FROM municipios)
+SELECT * FROM total WHERE pos <= 3;
