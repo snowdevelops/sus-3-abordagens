@@ -42,3 +42,12 @@ SELECT contagem_municipios.macrorregiao, contagem_municipios.cidades, zerados.se
 FROM contagem_municipios
 LEFT JOIN zerados ON contagem_municipios.macrorregiao = zerados.macrorregiao
 ORDER BY pct DESC;
+
+-- Concentração de leitos por macrorregião: quantos municípios concentram que percentual
+
+SELECT macrorregiao, nome, leitos_sus,
+SUM(leitos_sus) OVER (PARTITION BY macrorregiao ORDER BY leitos_sus DESC) AS acumulados,
+ROUND (SUM(leitos_sus) OVER (PARTITION BY macrorregiao ORDER BY leitos_sus DESC) * 100.0 / SUM(leitos_sus) OVER (PARTITION BY macrorregiao), 2) AS pct
+FROM municipios
+WHERE macrorregiao = 'VALE DO AÇO' -- Exemplo com uma macrorregião; remova o WHERE para ver todas
+ORDER BY macrorregiao, leitos_sus DESC;
